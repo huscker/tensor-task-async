@@ -1,11 +1,15 @@
+import { promises, resolve } from 'dns';
+
 /*
 Создайте функцию mock, которая принимает на вход аргумент number (количество миллисекунд) и возвращает Promise,
 который завершится через заданное количество миллисекунд со значением, переданным в аргумент.
  */
 export function mock(ms: number): Promise<number> {
-	return new Promise(()=>{
-		setTimeout(()=>{resolve(ms);},ms);	
-	});
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve(ms);
+        }, ms);
+    });
 }
 
 /*
@@ -13,7 +17,20 @@ export function mock(ms: number): Promise<number> {
  */
 export function getData(): Promise<number[]> {
     const result: number[] = [];
-	return Promise.all([mock(100),mock(200),mock(300)]);
+    return Promise.all([mock(100), mock(200), mock(300)]);
+    return mock(100)
+        .then((data1) => {
+            result.push(data1);
+            return mock(200);
+        })
+        .then((data2) => {
+            result.push(data2);
+            return mock(300);
+        })
+        .then((data3) => {
+            result.push(data3);
+            return result;
+        });
 }
 
 /*
@@ -22,8 +39,8 @@ export function getData(): Promise<number[]> {
  */
 export async function catchException(): Promise<string | undefined> {
     try {
-        new Error('my error');
+        throw new Error('my error');
     } catch (err) {
-        return err.message;
+        return 'my error';
     }
 }
